@@ -33,4 +33,6 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:$archVersion"
     implementation "android.arch.lifecycle:extensions:$archVersion"
     kapt "android.arch.lifecycle:compiler:$archVersion"
+
+    implementation 'com.jakewharton.timber:timber:4.5.1'
 }
