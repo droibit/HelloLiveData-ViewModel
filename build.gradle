@@ -3,6 +3,11 @@
 buildscript {
     ext {
         kotlinVersion = '1.1.4-3'
+        supportLibraryVersion = '26.1.0'
+        androidArchVersion = '1.0.0-alpha9'
+        okHttpVersion = '3.9.0'
+        retrofitVersion = '2.3.0'
+        gsonVersion = '2.8.1'
     }
     repositories {
         google()
@@ -26,4 +31,12 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+ext {
+    compileSdkVersion = 26
+    buildToolsVersion = '26.0.1'
+
+    versionCode = 1
+    versionName = "1.0"
 }
