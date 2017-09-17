@@ -12,7 +12,7 @@ data class RequestToken(val code: String) {
         private const val KEY_REDIRECT_URI = "redirect_uri"
     }
 
-    fun makeAuthenticationUri(redirectUri: String): Uri {
+    fun asAuthenticationUri(redirectUri: String): Uri {
         return Uri.parse(URL_OAUTH)
                 .buildUpon()
                 .appendQueryParameter(KEY_REQUEST_TOKEN, code)
