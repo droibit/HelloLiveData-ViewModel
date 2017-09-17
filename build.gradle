@@ -4,7 +4,7 @@ buildscript {
     ext {
         kotlinVersion = '1.1.4-3'
         supportLibraryVersion = '26.1.0'
-        androidArchVersion = '1.0.0-alpha9'
+        androidArchVersion = '1.0.0-alpha9-1'
         okHttpVersion = '3.9.0'
         retrofitVersion = '2.3.0'
         gsonVersion = '2.8.1'
