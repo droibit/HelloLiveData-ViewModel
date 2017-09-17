@@ -85,7 +85,7 @@ class Pocket internal constructor(private val service: Service, private val cons
         if (!okhttpResponse.isSuccessful) {
             throw PocketException(
                     error = Error(okhttpResponse.headers()),
-                    rateLimit = RateLimit(okhttpResponse.headers())
+                    rateLimit = PocketRateLimit(okhttpResponse.headers())
             )
         }
     }

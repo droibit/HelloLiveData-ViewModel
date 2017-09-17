@@ -12,7 +12,7 @@ import okhttp3.Headers
  * @property remainingCallsForConsumerKey Number of calls remaining before hitting consumer key's rate limit.
  * @property secondsUntilResetsForConsumerKey  Seconds until consumer key rate limit resets.
  */
-data class RateLimit(
+data class PocketRateLimit(
         val limitForUser: Int,
         val remainingCallsForUser: Int,
         val secondsUntilResetsForUser: Int,
