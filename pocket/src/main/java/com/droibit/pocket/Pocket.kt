@@ -2,6 +2,7 @@ package com.droibit.pocket
 
 import android.net.Uri
 import android.support.annotation.AnyThread
+import android.support.annotation.WorkerThread
 import com.droibit.pocket.response.*
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
@@ -12,6 +13,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import java.io.IOException
 import retrofit2.Callback as RetrofitCallback
 import retrofit2.Response as RetrofitResponse
 
@@ -64,6 +66,16 @@ class Pocket internal constructor(private val service: Service, private val cons
             consumerKey = consumerKey
     )
 
+    @Throws(IOException::class, PocketException::class)
+    @WorkerThread
+    fun blockingGetRequestToken(redirectUri: Uri): RequestToken {
+        val okhttpResponse = service.getRequestToken(consumerKey, redirectUri.toString()).execute()
+        if (!okhttpResponse.isSuccessful) {
+            throw PocketException(error = Error(okhttpResponse.headers()))
+        }
+        return okhttpResponse.body()!!
+    }
+
     @AnyThread
     fun getRequestToken(redirectUri: Uri, callback: Callback<RequestToken>) {
         service.getRequestToken(consumerKey, redirectUri.toString())
@@ -80,6 +92,16 @@ class Pocket internal constructor(private val service: Service, private val cons
                         callback(Failure(t))
                     }
                 })
+    }
+
+    @Throws(IOException::class, PocketException::class)
+    @WorkerThread
+    fun blockingGetAccessToken(requestToken: String): AccessToken {
+        val okhttpResponse = service.getAccessToken(consumerKey, requestToken).execute()
+        if (!okhttpResponse.isSuccessful) {
+            throw PocketException(error = Error(okhttpResponse.headers()))
+        }
+        return okhttpResponse.body()!!
     }
 
     @AnyThread
@@ -99,6 +121,19 @@ class Pocket internal constructor(private val service: Service, private val cons
                     }
                 })
     }
+
+    @Throws(IOException::class, PocketException::class)
+    @WorkerThread
+    fun blockingAdd(url: String, title: String? = null, tags: String? = null, tweetId: String? = null, accessToken: String) {
+        val okhttpResponse = service.add(url, title, tags, tweetId, consumerKey, accessToken).execute()
+        if (!okhttpResponse.isSuccessful) {
+            throw PocketException(
+                    error = Error(okhttpResponse.headers()),
+                    rateLimit = PocketRateLimit(okhttpResponse.headers())
+            )
+        }
+    }
+
 
     @AnyThread
     fun add(url: String, title: String? = null, tags: String? = null, tweetId: String? = null, accessToken: String, callback: Callback<Unit>) {

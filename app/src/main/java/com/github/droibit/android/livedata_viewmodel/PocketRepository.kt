@@ -6,8 +6,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import android.support.annotation.AnyThread
+import android.support.annotation.WorkerThread
 import com.droibit.pocket.Failure
 import com.droibit.pocket.Pocket
+import com.droibit.pocket.PocketException
 import com.droibit.pocket.Success
 import com.droibit.pocket.response.AccessToken
 import com.droibit.pocket.response.RequestToken
@@ -15,6 +17,7 @@ import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import okhttp3.logging.HttpLoggingInterceptor.Level.BODY
+import java.io.IOException
 
 class PocketRepository(context: Context) {
 
@@ -35,6 +38,12 @@ class PocketRepository(context: Context) {
         prefs = context.getSharedPreferences("pocket", Context.MODE_PRIVATE)
     }
 
+    @Throws(IOException::class, PocketException::class)
+    @WorkerThread
+    fun blockingGetRequestToken(redirectUri: Uri): RequestToken {
+        return pocket.blockingGetRequestToken(redirectUri)
+    }
+
     @AnyThread
     fun getRequestToken(redirectUri: Uri): LiveData<Result<RequestToken>> {
         val data = MutableLiveData<Result<RequestToken>>()
@@ -45,6 +54,14 @@ class PocketRepository(context: Context) {
             }
         }
         return data
+    }
+
+    @Throws(IOException::class, PocketException::class)
+    @WorkerThread
+    fun blockingGetAccessToken(requestToken: String): AccessToken {
+        return pocket.blockingGetAccessToken(requestToken).also {
+            storeAccessToken(accessToken = it.token)
+        }
     }
 
     @AnyThread
@@ -72,6 +89,12 @@ class PocketRepository(context: Context) {
             }
         }
         return data
+    }
+
+    @Throws(IOException::class, PocketException::class)
+    @WorkerThread
+    fun blockingAdd(url: String, tweetId: String? = null) {
+        pocket.blockingAdd(url, tweetId = tweetId, accessToken = getAccessToken())
     }
 
     private fun getAccessToken(): String {
