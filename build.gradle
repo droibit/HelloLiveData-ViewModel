@@ -3,6 +3,7 @@
 buildscript {
     ext {
         kotlinVersion = '1.1.4-3'
+        kotlinxCoroutinesVersion = '0.18'
         supportLibraryVersion = '26.1.0'
         androidArchVersion = '1.0.0-alpha9-1'
         okHttpVersion = '3.9.0'
