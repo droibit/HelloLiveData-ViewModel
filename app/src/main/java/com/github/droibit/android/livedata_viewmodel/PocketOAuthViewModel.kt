@@ -10,17 +10,7 @@ import com.droibit.pocket.response.RequestToken
 
 class PocketOAuthViewModel(application: Application) : AndroidViewModel(application) {
 
-    sealed class RequestTokenEvent {
-        class Success(val value: RequestToken) : RequestTokenEvent()
-        class Error(val error: String) : RequestTokenEvent()
-    }
-
-    sealed class AccessTokenEvent {
-        class Success(val value: AccessToken) : AccessTokenEvent()
-        class Error(val error: String) : AccessTokenEvent()
-    }
-
-    private val pocketRepository: PocketRepository
+    private val pocketRepository: PocketRepository = (application as HelloApplication).pocketRepository
 
     private val requestTokenTrigger = MutableLiveData<Uri>()
 
@@ -28,10 +18,9 @@ class PocketOAuthViewModel(application: Application) : AndroidViewModel(applicat
 
     val requestToken: LiveData<RequestTokenEvent>
 
-    val accesssToken: LiveData<AccessTokenEvent>
+    val accessToken: LiveData<AccessTokenEvent>
 
     init {
-        pocketRepository = (application as HelloApplication).pocketRepository
         requestToken = requestTokenTrigger.switchMap {
             pocketRepository.getRequestToken(redirectUri = it)
         }.map {
@@ -41,7 +30,7 @@ class PocketOAuthViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
 
-        accesssToken = accessTokenTrigger.switchMap {
+        accessToken = accessTokenTrigger.switchMap {
             pocketRepository.getAccessToken(requestToken = it)
         }.map {
             when (it) {

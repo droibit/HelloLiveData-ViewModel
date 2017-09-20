@@ -8,8 +8,6 @@ import android.support.v4.app.DialogFragment
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
-import com.github.droibit.android.livedata_viewmodel.PocketOAuthViewModel.AccessTokenEvent
-import com.github.droibit.android.livedata_viewmodel.PocketOAuthViewModel.RequestTokenEvent
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,8 +17,8 @@ class MainActivity : AppCompatActivity() {
         private const val FRAGMENT_PROGRESS_DIALOG = "FRAGMENT_PROGRESS_DIALOG"
     }
 
-    private val oauthViewModel: PocketOAuthViewModel by lazy {
-        ViewModelProviders.of(this).get<PocketOAuthViewModel>()
+    private val oauthViewModel: CoroutinePocketOAuthViewModel by lazy {
+        ViewModelProviders.of(this).get<CoroutinePocketOAuthViewModel>()
     }
 
     private val redirectUri: Uri by lazy { Uri.parse(getString(R.string.pocket_redirect_uri)) }
@@ -43,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        oauthViewModel.accesssToken.observe(this) {
+        oauthViewModel.accessToken.observe(this) {
             when (it) {
                 is AccessTokenEvent.Success -> {
                     message.text = "Authenticated with ${it.value.userName}"
