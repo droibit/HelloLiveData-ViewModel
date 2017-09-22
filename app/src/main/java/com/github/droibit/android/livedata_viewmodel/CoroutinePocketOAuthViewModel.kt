@@ -18,12 +18,14 @@ class CoroutinePocketOAuthViewModel(application: Application) : RunnableAndroidV
     private val _accessToken = MutableLiveData<AccessTokenEvent>()
 
     fun getRequestToken(redirectUri: Uri) {
-        ui {
-            _requestToken.value = async { _getRequestToken(redirectUri) }.await()
+        execute {
+            val event = async { _getRequestToken(redirectUri) }.await()
+            _requestToken.postValue(event)
         }
     }
 
     private fun _getRequestToken(redirectUri: Uri): RequestTokenEvent {
+        Timber.d("[${Thread.currentThread().name}]: _getRequestToken(uri=$redirectUri)")
         return try {
             pocketRepository.blockingGetRequestToken(redirectUri).run {
                 RequestTokenEvent.Success(this)
@@ -35,8 +37,9 @@ class CoroutinePocketOAuthViewModel(application: Application) : RunnableAndroidV
     }
 
     fun getAccessToken(requestToken: String) {
-        ui {
-            _accessToken.value = async { _getAccessToken(requestToken) }.await()
+        execute {
+            val event = async { _getAccessToken(requestToken) }.await()
+            _accessToken.postValue(event)
         }
     }
 
